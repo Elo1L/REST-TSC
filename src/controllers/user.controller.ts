@@ -1,5 +1,24 @@
 import { FastifyReply, FastifyRequest } from "fastify"
 import { IUser } from "interfaces"
+import type * as s from 'zapatos/schema'
+import * as db from 'zapatos/db'
+import pool from '../db/pgPool'
+
+export const listUsers = 
+  async (request: FastifyRequest, reply: FastifyReply) => {
+    return db.sql<s.users.SQL, s.users.Selectable[]>`SELECT * FROM ${"users"}`
+    .run(pool)
+    .then((users) => ({ data: users }))
+    // Or .then((users) => reply.send({ data: users }))
+}
+
+export const addUser = async (request: FastifyRequest, reply: FastifyReply) => {
+  const user = request.body;
+  let name = user["name"]
+  return db.sql<s.users.SQL, s.users.Insertable[]>`INSERT INTO ${"users"} (name) VALUES ('${name}');`
+  .run(pool)
+  .then((users) => ({ data: users }))
+}
 
 const staticUsers: IUser[] = [
     {
@@ -24,19 +43,19 @@ const staticUsers: IUser[] = [
       }
 ]
 
-export const addUser = async (request: FastifyRequest, reply: FastifyReply) => {
-    Promise.resolve(staticUsers)
-    .then((users) => {
-        const user = request.body;
-        const iuser : IUser = {
-            id:users[users.length-1]["id"]+1,
-            name: user["name"]
-        }
-        users.push(iuser);
-        console.log(users)
-	reply.send({ data: user })
-  })
-}
+// export const addUser = async (request: FastifyRequest, reply: FastifyReply) => {
+//     Promise.resolve(staticUsers)
+//     .then((users) => {
+//         const user = request.body;
+//         const iuser : IUser = {
+//             id:users[users.length-1]["id"]+1,
+//             name: user["name"]
+//         }
+//         users.push(iuser);
+//         console.log(users)
+// 	reply.send({ data: user })
+//   })
+// }
 
 export const updateUser = async (request: FastifyRequest, reply: FastifyReply) => {
     Promise.resolve(staticUsers)
@@ -54,14 +73,14 @@ export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =
   })
 }
 
-export const listUsers = async (
- request: FastifyRequest, 
- reply: FastifyReply) => {
-  Promise.resolve(staticUsers)
-  .then((users) => {
-	reply.send({ data: users })
-  })
-}
+// export const listUsers = async (
+//  request: FastifyRequest, 
+//  reply: FastifyReply) => {
+//   Promise.resolve(staticUsers)
+//   .then((users) => {
+// 	reply.send({ data: users })
+//   })
+// }
 
 export const UserById = async (
     request: FastifyRequest, 

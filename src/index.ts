@@ -1,10 +1,20 @@
 import fastify from 'fastify'
 import userRouter from './routes/user.router'
+import {initDB} from './db/initDB'
+
+import 'dotenv/config'
 
 const port = 5000;
 
 const startServer = async () => {
-  try {
+	try{
+		await initDB()
+		console.log('Database created')
+	} catch (e) {
+		console.error(e)
+	}
+	
+	try {
 	const server = fastify()
 
 	const errorHandler = (error, address) => {

@@ -1,0 +1,12 @@
+{
+    "db": {
+      "connectionString": "linkpostgres://hblkfsxr:VwlgJD3jNMhXFDvVbXxEogpNxVxCYidM@ella.db.elephantsql.com/hblkfsxr"
+    },
+    "outDir": "./src",
+    "schemas": {
+      "public": {
+        "include": ["users"],
+        "exclude": []
+      }
+    }
+  }
